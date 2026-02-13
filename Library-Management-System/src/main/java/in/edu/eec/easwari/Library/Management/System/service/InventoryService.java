@@ -11,6 +11,7 @@ import in.edu.eec.easwari.Library.Management.System.enums.BookStatus;
 import in.edu.eec.easwari.Library.Management.System.repository.AuthorRepository;
 import in.edu.eec.easwari.Library.Management.System.repository.BookRepository;
 import in.edu.eec.easwari.Library.Management.System.repository.SubjectRepository;
+import jakarta.transaction.Transactional;
 
 @Service
 public class InventoryService {
@@ -86,8 +87,23 @@ public class InventoryService {
         return bookRepository.save(book);
     }
 
+    @Transactional
     public void deleteBook(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+            .orElseThrow(() -> new RuntimeException("Book not found!"));
+
+        Author author = book.getAuthor();
+        Subject subject = book.getSubject();
+
         bookRepository.deleteById(bookId);
+
+        // Check whether author has any relevance in database
+        if (bookRepository.countByAuthorAuthorId(author.getAuthorId()) == 0) 
+            authorRepository.delete(author);
+
+        // Check whether subject has any relevance in database
+        if (bookRepository.countBySubjectSubjectId(subject.getSubjectId()) == 0) 
+            subjectRepository.delete(subject);
     }
 
     public Book markDamaged(Long bookId) {

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import in.edu.eec.easwari.Library.Management.System.dto.BookCreationRequest;
-import in.edu.eec.easwari.Library.Management.System.dto.BookUpdationRequest;
 import in.edu.eec.easwari.Library.Management.System.entity.Book;
 import in.edu.eec.easwari.Library.Management.System.service.InventoryService;
 
@@ -41,7 +40,8 @@ public class InventoryController {
      * PUT /api/inventory/books/{id}
      */
     @PutMapping("/books/{id}")
-    public Book updateBook(@PathVariable Long id, @RequestBody BookUpdationRequest request) {
+    public Book updateBook(@PathVariable Long id, 
+                           @RequestBody BookCreationRequest request) {
         return inventoryService
                 .updateBook(
                     id, 

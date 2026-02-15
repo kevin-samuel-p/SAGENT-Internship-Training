@@ -1,5 +1,6 @@
 package in.edu.eec.easwari.College.Admission.System.controller;
 
+import in.edu.eec.easwari.College.Admission.System.dto.UserDto;
 import in.edu.eec.easwari.College.Admission.System.entity.User;
 import in.edu.eec.easwari.College.Admission.System.repository.UserRepository;
 import in.edu.eec.easwari.College.Admission.System.utils.JwtUtils;
@@ -23,17 +24,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody in.edu.eec.easwari.College.Admission.System.entity.User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
+    public String register(@RequestBody UserDto user) {
+        User newUser = new User();
+        newUser.setName(user.getName());
+        newUser.setEmail(user.getEmail());
+        newUser.setPassword(encoder.encode(user.getPassword()));
         // Default to student if not specified
-        if(user.getRole() == null) user.setRole("ROLE_STUDENT");
-        userRepo.save(user);
+        newUser.setRole("ROLE_STUDENT");
+        userRepo.save(newUser);
         return "User registered";
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User loginRequest) {
-        Optional<in.edu.eec.easwari.College.Admission.System.entity.User> user = userRepo.findByEmail(loginRequest.getEmail());
+    public String login(@RequestBody UserDto loginRequest) {
+        Optional<User> user = userRepo.findByEmail(loginRequest.getEmail());
         if (user.isPresent() && encoder.matches(loginRequest.getPassword(), user.get().getPassword())) {
             return jwtUtils.generateToken(user.get().getEmail());
         }

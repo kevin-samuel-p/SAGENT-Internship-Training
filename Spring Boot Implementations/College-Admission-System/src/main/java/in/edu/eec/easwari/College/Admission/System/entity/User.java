@@ -22,5 +22,5 @@ public class User {
     private String name;
     
     // Roles: ROLE_STUDENT, ROLE_OFFICER
-    private String role; 
+    private String role;
 }

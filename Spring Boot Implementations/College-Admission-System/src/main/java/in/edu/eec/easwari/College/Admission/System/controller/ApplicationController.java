@@ -38,7 +38,7 @@ public class ApplicationController {
             @RequestParam("file") MultipartFile file) throws IOException {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User student = userRepo.findByEmail(email).orElseThrow();
+        User student = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("Student not found!"));
 
         // Save File
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -61,7 +61,7 @@ public class ApplicationController {
 
     @PostMapping("/student/pay/{appId}")
     public AdmissionApplication payFee(@PathVariable Long appId) {
-        AdmissionApplication app = appRepo.findById(appId).orElseThrow();
+        AdmissionApplication app = appRepo.findById(appId).orElseThrow(() -> new RuntimeException("Application not found!"));
         app.setFeePaid(true);
         app.setStatus("PAID");
         return appRepo.save(app);
@@ -69,7 +69,7 @@ public class ApplicationController {
     
     @PostMapping("/student/cancel/{appId}")
     public AdmissionApplication cancel(@PathVariable Long appId) {
-        AdmissionApplication app = appRepo.findById(appId).orElseThrow();
+        AdmissionApplication app = appRepo.findById(appId).orElseThrow(() -> new RuntimeException("Application not found!"));
         app.setStatus("CANCELLED");
         return appRepo.save(app);
     }
@@ -77,7 +77,7 @@ public class ApplicationController {
     @GetMapping("/student/my-applications")
     public List<AdmissionApplication> myApps() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        User student = userRepo.findByEmail(email).orElseThrow();
+        User student = userRepo.findByEmail(email).orElseThrow(() -> new RuntimeException("Student not found!"));
         return appRepo.findByStudent(student);
     }
 
@@ -90,7 +90,7 @@ public class ApplicationController {
 
     @PutMapping("/admin/update-status/{appId}")
     public AdmissionApplication updateStatus(@PathVariable Long appId, @RequestParam String status) {
-        AdmissionApplication app = appRepo.findById(appId).orElseThrow();
+        AdmissionApplication app = appRepo.findById(appId).orElseThrow(() -> new RuntimeException("Application not found!"));
         app.setStatus(status);
         return appRepo.save(app);
     }

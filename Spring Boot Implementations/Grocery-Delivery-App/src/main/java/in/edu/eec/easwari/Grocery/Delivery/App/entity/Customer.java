@@ -1,15 +1,12 @@
 package in.edu.eec.easwari.Grocery.Delivery.App.entity;
 
-import java.util.List;
-
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Entity
@@ -23,14 +20,8 @@ public class Customer {
 
     private String name;
     private String address;
+
+    @Column(unique = true)
+    @NotNull
     private String mobile;
-
-    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
-    private Cart cart;
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Order> orders;
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
-    private List<Notification> notifications;
 }

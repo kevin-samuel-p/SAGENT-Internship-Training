@@ -1,5 +1,7 @@
 package in.edu.eec.easwari.Grocery.Delivery.App.service.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import in.edu.eec.easwari.Grocery.Delivery.App.dto.request.AddToCartRequestDTO;
@@ -12,6 +14,7 @@ import in.edu.eec.easwari.Grocery.Delivery.App.repository.CartItemRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.repository.CartRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.repository.ProductRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.service.CartService;
+import jakarta.transaction.Transactional;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -34,19 +37,20 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findByCustomer_CustomerId(request.getCustomerId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
 
-
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
+        List<CartItem> cartItems = cartItemRepository.findByCart_CartId(cart.getCartId());
 
         CartItem item = new CartItem();
         item.setCart(cart);
         item.setProduct(product);
         item.setQuantity(request.getQuantity());
 
-        cartItemRepository.save(item);
+        cartItems.add(
+            cartItemRepository.save(item));
 
-        double total = cart.getCartItems().stream()
+        double total = cartItems.stream()
                 .mapToDouble(ci -> ci.getProduct().getPrice() * ci.getQuantity())
                 .sum();
 
@@ -57,24 +61,43 @@ public class CartServiceImpl implements CartService {
 
         cartRepository.save(cart);
 
-        // build response DTO (simplified)
+        // build response DTO
         CartResponseDTO dto = new CartResponseDTO();
         dto.setCartId(cart.getCartId());
         dto.setCustomerId(cart.getCustomer().getCustomerId());
         dto.setTotalValue(total);
         dto.setDiscountApplied(discount);
         dto.setFinalAmount(total - discount);
+        dto.setItems(cartItems);
 
         return dto;
     }
 
     @Override
     public CartResponseDTO getCart(Long cartId) {
-        // similar mapping logic
-        return null;
+        Cart cart = cartRepository
+                        .findById(cartId)
+                                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Cart not found"));
+
+        List<CartItem> cartItems = cartItemRepository.findByCart_CartId(cartId);
+
+        Double total = cart.getTotalValue();
+        Double discount = cart.getDiscountApplied();
+
+        CartResponseDTO dto = new CartResponseDTO();
+        dto.setCartId(cart.getCartId());
+        dto.setCustomerId(cart.getCustomer().getCustomerId());
+        dto.setTotalValue(total);
+        dto.setDiscountApplied(discount);
+        dto.setFinalAmount(total - discount);
+        dto.setItems(cartItems);
+
+        return dto;
     }
 
     @Override
+    @Transactional
     public void removeItem(Long cartId, Long productId) {
         cartItemRepository.deleteByCart_CartIdAndProduct_ProductId(cartId, productId);
     }

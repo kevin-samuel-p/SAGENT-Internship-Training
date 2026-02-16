@@ -1,6 +1,7 @@
 package in.edu.eec.easwari.Grocery.Delivery.App.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import in.edu.eec.easwari.Grocery.Delivery.App.enums.PaymentMethod;
 import in.edu.eec.easwari.Grocery.Delivery.App.exception.InsufficientStockException;
 import in.edu.eec.easwari.Grocery.Delivery.App.exception.InvalidOperationException;
 import in.edu.eec.easwari.Grocery.Delivery.App.exception.ResourceNotFoundException;
+import in.edu.eec.easwari.Grocery.Delivery.App.repository.CartItemRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.repository.CartRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.repository.CustomerRepository;
 import in.edu.eec.easwari.Grocery.Delivery.App.repository.OrderRepository;
@@ -33,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final CartRepository cartRepository;
+    private final CartItemRepository cartItemRepository;
     private final StoreRepository storeRepository;
     private final CustomerRepository customerRepository;
     private final DeliveryAssignmentService deliveryAssignmentService;
@@ -41,6 +44,7 @@ public class OrderServiceImpl implements OrderService {
 
     public OrderServiceImpl(OrderRepository orderRepository,
                             CartRepository cartRepository,
+                            CartItemRepository cartItemRepository,
                             StoreRepository storeRepository,
                             CustomerRepository customerRepository,
                             DeliveryAssignmentService deliveryAssignmentService,
@@ -48,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
                             NotificationService notificationService) {
         this.orderRepository = orderRepository;
         this.cartRepository = cartRepository;
+        this.cartItemRepository = cartItemRepository;
         this.storeRepository = storeRepository;
         this.customerRepository = customerRepository;
         this.deliveryAssignmentService = deliveryAssignmentService;
@@ -68,12 +73,14 @@ public class OrderServiceImpl implements OrderService {
         Store store = storeRepository.findById(request.getStoreId())
                 .orElseThrow(() -> new ResourceNotFoundException("Store not found"));
 
-        if (cart.getCartItems().isEmpty()) {
+        List<CartItem> cartItems = cartItemRepository.findByCart_CartId(cart.getCartId());
+
+        if (cartItems.isEmpty()) {
             throw new InvalidOperationException("Cart is empty");
         }
 
         // Validate stock before deduction
-        for (CartItem item : cart.getCartItems()) {
+        for (CartItem item : cartItems) {
             Product product = item.getProduct();
 
             if (product.getStockQuantity() < item.getQuantity()) 
@@ -82,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // Deduct stock
-        for (CartItem item : cart.getCartItems()) {
+        for (CartItem item : cartItems) {
             Product product = item.getProduct();
             product.setStockQuantity(
                     product.getStockQuantity() 
@@ -112,7 +119,7 @@ public class OrderServiceImpl implements OrderService {
         paymentService.processPayment(savedOrder.getOrderId(), method);
 
         // Clear cart
-        cart.getCartItems().clear();
+        cartItems.clear();
         cart.setTotalValue(0.0);
         cart.setDiscountApplied(0.0);
         cartRepository.save(cart);

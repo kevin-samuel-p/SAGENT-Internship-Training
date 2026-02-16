@@ -14,8 +14,9 @@ export const addToCartApi = async (customerId, productId, quantity) => {
   return res.data;
 };
 
-export const removeCartItemApi = async (customerId, productId) => {
-  return api.delete(`/cart/remove`, {
-    data: { customerId, productId }
-  });
-};
+// TODO: XXX: Needs to be implemented: 
+// export const removeCartItemApi = async (customerId, productId) => {
+//   return api.delete(`/cart/remove`, {
+//     data: { customerId, productId }
+//   });
+// };

@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserLoginResponseDTO {
-    private Long userId;
-    private String token;
-    private String tokenType = "Bearer";
+public class DashboardResponseDTO {
+
+    private Double totalIncome;
+    private Double totalExpense;
+    private Double balance;
 }

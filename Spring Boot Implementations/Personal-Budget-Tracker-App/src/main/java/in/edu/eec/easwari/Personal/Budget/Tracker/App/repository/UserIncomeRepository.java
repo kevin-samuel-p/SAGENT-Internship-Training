@@ -24,5 +24,11 @@ public interface UserIncomeRepository extends JpaRepository<UserIncome, Long> {
            AND YEAR(ui.incomeDate) = :year
            """)
     BigDecimal getMonthlyIncome(Long userId, int month, int year);
-    BigDecimal getTotalIncomeByUser(Long userId);
+
+    @Query("""
+           SELECT COALESCE(SUM(ui.amount),0)
+           FROM UserIncome ui
+           WHERE ui.user.userId = :userId
+           """)
+    BigDecimal getTotalIncome(Long userId);
 }

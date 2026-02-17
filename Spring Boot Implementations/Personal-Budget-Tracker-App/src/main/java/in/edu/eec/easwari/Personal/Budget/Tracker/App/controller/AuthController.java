@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.RefreshTokenRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.UserLoginRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.UserRegistrationRequestDTO;
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.RefreshTokenResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.UserLoginResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.UserRegistrationResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.User;
@@ -18,7 +20,7 @@ import in.edu.eec.easwari.Personal.Budget.Tracker.App.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -30,6 +32,7 @@ public class AuthController {
     @PostMapping("/register")
     public UserRegistrationResponseDTO register(@RequestBody UserRegistrationRequestDTO req) {
         User user = new User();
+        user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         userRepository.save(user);
@@ -51,6 +54,26 @@ public class AuthController {
         );
 
         String token = jwtUtil.generateToken(req.getEmail());
-        return new UserLoginResponseDTO(token, "Bearer");
+        User user = userRepository.findByEmail(req.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return new UserLoginResponseDTO(
+                    user.getUserId(), 
+                    token, "Bearer");
+    }
+
+    @PostMapping("/refresh")
+    public RefreshTokenResponseDTO refresh(
+            @RequestBody RefreshTokenRequestDTO req) {
+
+        String username = jwtUtil.extractUsername(req.getRefreshToken());
+
+        String newAccessToken = jwtUtil.generateToken(username);
+
+        return new RefreshTokenResponseDTO(
+                newAccessToken,
+                req.getRefreshToken(),
+                "Bearer"
+        );
     }
 }

@@ -20,7 +20,7 @@ public class DashboardServiceImpl implements DashboardService {
     @Override
     public DashboardSummaryDTO getDashboardSummary(Long userId) {
 
-        BigDecimal totalIncome = incomeRepository.getTotalIncomeByUser(userId);
+        BigDecimal totalIncome = incomeRepository.getTotalIncome(userId);
         BigDecimal totalExpenses = expenseRepository.getTotalExpensesByUser(userId);
 
         BigDecimal balance = totalIncome.subtract(totalExpenses);

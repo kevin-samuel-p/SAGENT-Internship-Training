@@ -59,6 +59,6 @@ public class IncomeServiceImpl implements IncomeService {
 
     @Override
     public BigDecimal getTotalIncome(Long userId) {
-        return incomeRepository.getTotalIncomeByUser(userId);
+        return incomeRepository.getTotalIncome(userId);
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.ExpenseCategoryDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.ExpenseRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.ExpenseResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.service.ExpenseService;
@@ -32,6 +33,12 @@ public class ExpenseController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeExpense(@PathVariable Long id) {
+        expenseService.removeExpense(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<ExpenseResponseDTO>>> getUserExpenses(
             @PathVariable Long userId) {
@@ -53,6 +60,17 @@ public class ExpenseController {
 
         return ResponseEntity.ok(
                 ResponseUtil.success(total, "Total expenses calculated successfully")
+        );
+    }
+
+    @GetMapping("/categories/all")
+    public ResponseEntity<ApiResponse<List<ExpenseCategoryDTO>>> getAllCategories() {
+        
+        List<ExpenseCategoryDTO> categories = 
+                expenseService.getAllCategories();
+
+        return ResponseEntity.ok(
+                ResponseUtil.success(categories, "Retrieved all categories successfully")
         );
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.IncomeSourceDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.IncomeRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.IncomeResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.IncomeSource;
@@ -50,6 +51,11 @@ public class IncomeServiceImpl implements IncomeService {
     }
 
     @Override
+    public void removeIncome(Long incomeId) {
+        incomeRepository.deleteById(incomeId);
+    }
+
+    @Override
     public List<IncomeResponseDTO> getUserIncomes(Long userId) {
         return incomeRepository.findByUser_UserId(userId)
                 .stream()
@@ -60,5 +66,16 @@ public class IncomeServiceImpl implements IncomeService {
     @Override
     public BigDecimal getTotalIncome(Long userId) {
         return incomeRepository.getTotalIncome(userId);
+    }
+
+    @Override
+    public List<IncomeSourceDTO> getAllSources() {
+        return sourceRepository.findAll()
+                    .stream()
+                    .map(source -> new IncomeSourceDTO(
+                            source.getSourceId(), 
+                            source.getSourceName(), 
+                            source.getSourceDescription()))
+                    .toList();
     }
 }

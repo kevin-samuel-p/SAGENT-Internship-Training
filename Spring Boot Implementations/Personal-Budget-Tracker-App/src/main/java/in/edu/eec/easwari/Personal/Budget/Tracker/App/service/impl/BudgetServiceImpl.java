@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.BudgetUsageDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.BudgetRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.BudgetResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.ExpenseCategory;
@@ -12,6 +13,7 @@ import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.UserBudget;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.exception.ResourceNotFoundException;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.mapper.BudgetMapper;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.repository.ExpenseCategoryRepository;
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.repository.UserExpenseRepository;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.repository.UserBudgetRepository;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.repository.UserRepository;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.service.BudgetService;
@@ -25,6 +27,7 @@ public class BudgetServiceImpl implements BudgetService {
 
     private final UserBudgetRepository budgetRepository;
     private final UserRepository userRepository;
+    private final UserExpenseRepository expenseRepository;
     private final ExpenseCategoryRepository categoryRepository;
 
     @Override
@@ -64,5 +67,10 @@ public class BudgetServiceImpl implements BudgetService {
                 .stream()
                 .map(BudgetMapper::toDTO)
                 .toList();
+    }
+
+    @Override
+    public List<BudgetUsageDTO> getBudgetUsage(Long userId) {
+        return expenseRepository.getBudgetUsage(userId);
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.ExpenseCategoryDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.ExpenseRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.ExpenseResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.ExpenseCategory;
@@ -51,6 +52,11 @@ public class ExpenseServiceImpl implements ExpenseService {
     }
 
     @Override
+    public void removeExpense(Long expenseId) {
+        expenseRepository.deleteById(expenseId);
+    }
+
+    @Override
     public List<ExpenseResponseDTO> getUserExpenses(Long userId) {
         return expenseRepository.findByUser_UserId(userId)
                 .stream()
@@ -61,5 +67,16 @@ public class ExpenseServiceImpl implements ExpenseService {
     @Override
     public BigDecimal getTotalExpenses(Long userId) {
         return expenseRepository.getTotalExpensesByUser(userId);
+    }
+
+    @Override
+    public List<ExpenseCategoryDTO> getAllCategories() {
+        return categoryRepository.findAll()
+                    .stream()
+                    .map(category -> new ExpenseCategoryDTO(
+                            category.getCategoryId(), 
+                            category.getCategoryName(), 
+                            category.getCategoryDescription()))
+                    .toList();
     }
 }

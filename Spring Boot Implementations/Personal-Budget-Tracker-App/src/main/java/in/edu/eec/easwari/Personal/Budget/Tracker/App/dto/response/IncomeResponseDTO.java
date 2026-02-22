@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class IncomeResponseDTO {
 
     private Long incomeId;
-    private String sourceName;
+    private Long sourceId;
     private BigDecimal amount;
     private LocalDate incomeDate;
 }

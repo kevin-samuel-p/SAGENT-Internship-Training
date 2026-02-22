@@ -19,4 +19,7 @@ public class IncomeSource {
 
     @Column(nullable = false, unique = true)
     private String sourceName;
+
+    @Column(nullable = true, unique = false)
+    private String sourceDescription;
 }

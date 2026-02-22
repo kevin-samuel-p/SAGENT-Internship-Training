@@ -19,4 +19,7 @@ public class ExpenseCategory {
 
     @Column(nullable = false, unique = true)
     private String categoryName;
+
+    @Column(nullable = true, unique = false)
+    private String categoryDescription;
 }

@@ -8,7 +8,7 @@ public class IncomeMapper {
     public static IncomeResponseDTO toDTO(UserIncome income) {
         return IncomeResponseDTO.builder()
                 .incomeId(income.getIncomeId())
-                .sourceName(income.getIncomeSource().getSourceName())
+                .sourceId(income.getIncomeSource().getSourceId())
                 .amount(income.getAmount())
                 .incomeDate(income.getIncomeDate())
                 .build();

@@ -17,9 +17,8 @@ export default function LoginPage() {
 
         try {
             const res = await loginApi({ email, password });
-
-            login(res.data.token);
-            localStorage.setItem("userId", res.data.userId);
+            console.log(res);    
+            login(res.data);
 
             navigate("/dashboard");
         } catch (err) {

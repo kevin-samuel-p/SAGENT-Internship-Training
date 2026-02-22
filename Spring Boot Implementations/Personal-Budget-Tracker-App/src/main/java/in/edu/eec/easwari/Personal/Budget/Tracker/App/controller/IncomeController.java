@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.IncomeSourceDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.request.IncomeRequestDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.IncomeResponseDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.service.IncomeService;
@@ -32,6 +33,12 @@ public class IncomeController {
         );
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeIncome(@PathVariable Long id) {
+        incomeService.removeIncome(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<IncomeResponseDTO>>> getUserIncome(
             @PathVariable Long userId) {
@@ -53,6 +60,17 @@ public class IncomeController {
 
         return ResponseEntity.ok(
                 ResponseUtil.success(total, "Total income calculated successfully")
+        );
+    }
+
+    @GetMapping("/sources/all")
+    public ResponseEntity<ApiResponse<List<IncomeSourceDTO>>> getAllSources() {
+
+        List<IncomeSourceDTO> sources = 
+                incomeService.getAllSources();
+        
+        return ResponseEntity.ok(
+                ResponseUtil.success(sources, "Retrieved all sources successfully")
         );
     }
 }

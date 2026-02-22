@@ -1,12 +1,11 @@
-import axios from "axios";
+import api from "../api/axiosConfig";
 
-const API_BASE = "http://localhost:8080/api";
+export const addBudget = (data) => 
+  api.post("/budget", data);
 
-export const getMonthlyBudgets = (userId, month, year) => {
-  return axios.get(`${API_BASE}/budgets/${userId}/${month}/${year}`);
-};
+export const getMonthlyBudgets = (userId, month, year) => 
+  api.get(`/budget/${userId}/${month}/${year}`);
 
-// If you have expense summary endpoint
-export const getExpenseSummary = (userId, month, year) => {
-  return axios.get(`${API_BASE}/expenses/summary/${userId}/${month}/${year}`);
-};
+
+export const getBudgetUsage = (userId) => 
+  api.get(`/budget/usage/${userId}`);

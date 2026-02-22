@@ -8,7 +8,7 @@ public class ExpenseMapper {
     public static ExpenseResponseDTO toDTO(UserExpense expense) {
         return ExpenseResponseDTO.builder()
                 .expenseId(expense.getExpenseId())
-                .categoryName(expense.getCategory().getCategoryName())
+                .categoryId(expense.getCategory().getCategoryId())
                 .amount(expense.getAmount())
                 .expenseDate(expense.getExpenseDate())
                 .description(expense.getDescription())

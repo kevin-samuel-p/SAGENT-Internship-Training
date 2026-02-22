@@ -20,11 +20,11 @@ export default function Navbar() {
                 Budget Tracker
             </h1>
 
+            <button onClick={() => navigate("/budget")} className="mr-4">Budget</button>
             <button onClick={() => navigate("/income")} className="mr-4">Income</button>
             <button onClick={() => navigate("/expense")} className="mr-4">Expense</button>
 
-            <button
-                onClick={handleLogout}
+            <button onClick={handleLogout}
                 className="bg-white text-indigo-600 px-4 py-1 rounded-lg font-medium"
             >
                 Logout

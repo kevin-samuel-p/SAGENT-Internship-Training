@@ -8,3 +8,6 @@ export const addIncome = (data) =>
 
 export const deleteIncome = (id) =>
     api.delete(`/income/${id}`);
+
+export const getIncomeSources = () =>
+    api.get("/income/sources/all");

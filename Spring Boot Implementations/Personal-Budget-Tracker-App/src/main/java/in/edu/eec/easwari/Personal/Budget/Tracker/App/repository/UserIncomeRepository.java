@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.MonthlyFinanceDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.UserIncome;
 
 public interface UserIncomeRepository extends JpaRepository<UserIncome, Long> {
@@ -17,13 +18,16 @@ public interface UserIncomeRepository extends JpaRepository<UserIncome, Long> {
             LocalDate end);
 
     @Query("""
-           SELECT COALESCE(SUM(ui.amount), 0)
-           FROM UserIncome ui
-           WHERE ui.user.userId = :userId
-           AND MONTH(ui.incomeDate) = :month
-           AND YEAR(ui.incomeDate) = :year
-           """)
-    BigDecimal getMonthlyIncome(Long userId, int month, int year);
+        SELECT new in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.MonthlyFinanceDTO(
+            MONTH(i.incomeDate),
+            COALESCE(SUM(i.amount), CAST(0 as java.math.BigDecimal)),
+            CAST(0 as java.math.BigDecimal)
+        )
+        FROM UserIncome i
+        WHERE i.user.userId = :userId
+        GROUP BY MONTH(i.incomeDate)
+    """)
+    List<MonthlyFinanceDTO> getMonthlyIncome(Long userId);
 
     @Query("""
            SELECT COALESCE(SUM(ui.amount),0)

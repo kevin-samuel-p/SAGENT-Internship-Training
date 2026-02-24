@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
+import AnalyticsPage from "./pages/AnalyticsPage";
 import BudgetPage from "./pages/BudgetPage";
 import ExpensePage from "./pages/ExpensePage";
+import GoalPage from "./pages/GoalPage";
 import IncomePage from "./pages/IncomePage";
 import PrivateRoute from "./auth/PrivateRoute";
 
@@ -17,7 +19,9 @@ function App() {
         <Route path="/income" element={<PrivateRoute><IncomePage/></PrivateRoute>} />
         <Route path="/expense" element={<PrivateRoute><ExpensePage/></PrivateRoute>} />
         <Route path="/budget" element={<PrivateRoute><BudgetPage/></PrivateRoute>} />
+        <Route path="/goals" element={<PrivateRoute><GoalPage/></PrivateRoute>} />
         <Route path="/dashboard" element={<PrivateRoute><DashboardPage/></PrivateRoute>} />
+        <Route path="/analytics" element={<PrivateRoute><AnalyticsPage/></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   );

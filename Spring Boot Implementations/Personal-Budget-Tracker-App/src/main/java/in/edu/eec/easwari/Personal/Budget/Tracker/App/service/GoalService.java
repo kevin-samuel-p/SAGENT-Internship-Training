@@ -8,6 +8,10 @@ import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.response.GoalResponseD
 public interface GoalService {
 
     GoalResponseDTO createGoal(GoalRequestDTO request);
+    GoalResponseDTO updateGoal(Long goalId, Double amount);
+    void deleteGoal(Long goalId);
 
     List<GoalResponseDTO> getUserGoals(Long userId);
+
+    void allocateSavings(Long userId);
 }

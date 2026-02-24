@@ -31,6 +31,12 @@ public class GoalController {
         );
     }
 
+    @DeleteMapping("/{goalId}")
+    public ResponseEntity<Void> deleteGoal(@PathVariable Long goalId) {
+        goalService.deleteGoal(goalId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<GoalResponseDTO>>> getUserGoals(
             @PathVariable Long userId) {
@@ -41,5 +47,21 @@ public class GoalController {
         return ResponseEntity.ok(
                 ResponseUtil.success(goals, "User goals fetched successfully")
         );
+    }
+
+    @PostMapping("/allocate/{userId}")
+    public ResponseEntity<Void> allocate(@PathVariable Long userId) {
+        goalService.allocateSavings(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/contribute/{goalId}")
+    public ResponseEntity<ApiResponse<GoalResponseDTO>> contribute(
+            @PathVariable Long goalId,
+            @RequestParam Double amount) {
+
+        GoalResponseDTO response = goalService.updateGoal(goalId, amount);
+        return ResponseEntity.ok(
+                ResponseUtil.success(response, "Contribution successful"));
     }
 }

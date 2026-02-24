@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.BudgetUsageDTO;
+import in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.MonthlyFinanceDTO;
 import in.edu.eec.easwari.Personal.Budget.Tracker.App.entity.UserExpense;
 
 public interface UserExpenseRepository extends JpaRepository<UserExpense, Long> {
@@ -25,13 +26,16 @@ public interface UserExpenseRepository extends JpaRepository<UserExpense, Long> 
     BigDecimal getTotalExpensesByUser(Long userId);
 
     @Query("""
-           SELECT COALESCE(SUM(ue.amount), 0)
-           FROM UserExpense ue
-           WHERE ue.user.userId = :userId
-           AND MONTH(ue.expenseDate) = :month
-           AND YEAR(ue.expenseDate) = :year
-           """)
-    BigDecimal getMonthlyExpenses(Long userId, int month, int year);
+        SELECT new in.edu.eec.easwari.Personal.Budget.Tracker.App.dto.MonthlyFinanceDTO(
+            MONTH(e.expenseDate),
+            CAST(0 as java.math.BigDecimal),
+            COALESCE(SUM(e.amount), CAST(0 as java.math.BigDecimal))
+        )
+        FROM UserExpense e
+        WHERE e.user.userId = :userId
+        GROUP BY MONTH(e.expenseDate)
+    """)
+    List<MonthlyFinanceDTO> getMonthlyExpenses(Long userId);
 
     @Query("""
            SELECT ue.category.categoryName,

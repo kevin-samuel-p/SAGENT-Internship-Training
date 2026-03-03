@@ -17,8 +17,13 @@ export default function GoalPage() {
   });
 
   const loadData = async () => {
-    const res = await getGoals(userId);
-    setGoals(res.data.data);
+    try {
+      const res = await getGoals(userId);
+      setGoals(Array.isArray(res?.data?.data) ? res.data.data : []);
+    } catch (err) {
+      console.error("Failed to load goals", err);
+      setGoals([]);
+    }
   };
 
   useEffect(() => {
@@ -65,7 +70,9 @@ export default function GoalPage() {
           {goals.map((g) => {
 
             const percent =
-              (g.currentAmount / g.targetAmount) * 100;
+              g.targetAmount > 0
+                ? (g.currentAmount / g.targetAmount) * 100
+                : 0;
 
             return (
               <div key={g.goalId}
@@ -86,7 +93,7 @@ export default function GoalPage() {
                       const amount = prompt("Enter contribution amount");
                       if (!amount) return;
 
-                      await contribute(goalId, amount);
+                      await contribute(g.goalId, amount);
                       loadData();
                     }}
                     className="text-indigo-600 mr-4"

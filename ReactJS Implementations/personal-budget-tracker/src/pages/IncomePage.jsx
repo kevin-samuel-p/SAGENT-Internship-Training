@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getIncomes, addIncome, deleteIncome, getIncomeSources } from "../services/incomeService";
 import Navbar from "../components/Navbar";
+import AIChatPanel from "../components/AIChatPanel";
 
 export default function IncomePage() {
   const userId = localStorage.getItem("userId") || null;
@@ -76,6 +77,7 @@ export default function IncomePage() {
   return (
     <>
       <Navbar />
+      <AIChatPanel />
 
       <div className="p-8">
         <div className="flex justify-between mb-6">
@@ -170,6 +172,7 @@ export default function IncomePage() {
                     </td>
                     <td className="p-3">
                       <input
+                        type="number"
                         placeholder="Amount"
                         className="w-full border p-2 mb-3"
                         value={form.amount}

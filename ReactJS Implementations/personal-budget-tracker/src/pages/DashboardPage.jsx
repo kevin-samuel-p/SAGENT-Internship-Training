@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import api from "../api/axiosConfig";
 import Navbar from "../components/Navbar";
+import AIChatPanel from "../components/AIChatPanel";
 import { AuthContext } from "../auth/AuthContext";
 import { allocateSavings } from "../services/goalService";
 
@@ -9,7 +10,7 @@ export default function DashboardPage() {
 
   const [data, setData] = useState({
     totalIncome: 0,
-    totalExpense: 0,
+    totalExpenses: 0,
     balance: 0
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -88,6 +89,7 @@ export default function DashboardPage() {
   return (
     <>
       <Navbar />
+      <AIChatPanel />
 
       <div className="gradient-bg min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center">

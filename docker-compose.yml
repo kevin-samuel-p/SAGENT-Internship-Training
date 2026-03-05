@@ -1,0 +1,58 @@
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: budget-tracker-db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: budget_tracker
+      # MYSQL_USER: budget_user
+      # MYSQL_PASSWORD: budget_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - budget-network
+    restart: unless-stopped
+
+  # Spring Boot Backend
+  backend:
+    build:
+      context: ./Spring Boot Implementations/Personal-Budget-Tracker-App
+      dockerfile: Dockerfile
+    container_name: budget-tracker-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/budget_tracker
+      SPRING_DATASOURCE_USERNAME: budget_user
+      SPRING_DATASOURCE_PASSWORD: budget_password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: true
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    networks:
+      - budget-network
+    restart: unless-stopped
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./ReactJS Implementations/personal-budget-tracker
+      dockerfile: Dockerfile
+    container_name: budget-tracker-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - budget-network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  budget-network:
+    driver: bridge

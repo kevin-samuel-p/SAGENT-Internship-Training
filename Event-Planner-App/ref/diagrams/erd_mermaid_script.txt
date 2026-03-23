@@ -1,0 +1,208 @@
+erDiagram
+
+USER {
+    int user_id PK
+    string name
+    string email
+    string phone
+    string password
+    string role
+}
+
+EVENT {
+    int event_id PK
+    string event_name
+    date event_date
+    string venue
+    string event_type
+    int organizer_id FK
+}
+
+TASK {
+    int task_id PK
+    string task_name
+    string description
+    date deadline
+    string status
+    int event_id FK
+    int assigned_to FK
+}
+
+SESSION {
+    int session_id PK
+    string session_name
+    time start_time
+    time end_time
+    text description
+    string status
+    string type
+    int event_id FK
+    int created_by FK
+    date created_at
+    date updated_at
+}
+
+SESSION_ASSIGNMENT {
+    int assignment_id PK
+    int session_id FK
+    int user_id FK
+    string role
+    date assigned_at
+}
+
+EVENT_VENDOR {
+    int event_vendor_id PK
+    int event_id FK
+    int vendor_id FK
+    string service_type
+    string contract_status
+}
+
+BUDGET {
+    int budget_id PK
+    int event_id FK
+    float total_budget
+    float spent_amount
+}
+
+PAYMENT {
+    int payment_id PK
+    int budget_id FK
+    int event_vendor_id FK
+    float amount
+    date payment_date
+    string payment_status
+}
+
+INVITATION {
+    int invitation_id PK
+    int event_id FK
+    int guest_id FK
+    string rsvp_status
+    date invitation_date
+    string custom_message
+}
+
+NOTIFICATION {
+    int notification_id PK
+    int user_id FK
+    int event_id FK
+    string message
+    string status
+}
+
+FEEDBACK {
+    int feedback_id PK
+    int user_id FK
+    int event_id FK
+    int rating
+    string comments
+}
+
+GROUP_CHAT {
+    int gc_id PK
+    string gc_name
+    string join_code
+    int created_by_user FK
+    int event_id FK
+    date created_at
+}
+
+ATTRIBUTE {
+    int attribute_id PK
+    string attribute_name
+    string permissions_config
+    int gc_id FK
+}
+
+CHAT_MEMBER {
+    int member_id PK
+    int gc_id FK
+    int user_id FK
+    date joined_at
+}
+
+CHAT_MEMBER_ATTRIBUTE {
+    int member_attribute_id PK
+    int member_id FK
+    int attribute_id FK
+}
+
+FORUM {
+    int forum_id PK
+    string forum_name
+    int created_by_user FK
+    int gc_id FK
+    date created_at
+}
+
+GC_MESSAGE {
+    int message_id PK
+    int forum_id FK
+    int member_id FK
+    string message
+    datetime timestamp
+}
+
+DIRECT_MESSAGE {
+    int dm_id PK
+    int gc_id FK
+    int member1_id FK
+    int member2_id FK
+    date created_at
+}
+
+DM_MESSAGE {
+    int message_id PK
+    int dm_id FK
+    int user_id FK
+    string message
+    datetime timestamp
+}
+
+USER ||--o{ EVENT : creates
+EVENT ||--o{ TASK : has
+USER ||--o{ TASK : assigned_to
+
+EVENT ||--o{ SESSION : contains
+USER ||--o{ SESSION : creates
+SESSION ||--o{ SESSION_ASSIGNMENT : has
+USER ||--o{ SESSION_ASSIGNMENT : assigned_to
+
+EVENT ||--|| BUDGET : has
+BUDGET ||--o{ PAYMENT : records
+EVENT_VENDOR ||--o{ PAYMENT : receives
+
+EVENT ||--o{ EVENT_VENDOR : includes
+USER ||--o{ EVENT_VENDOR : vendor
+
+EVENT ||--o{ INVITATION : sends
+USER ||--o{ INVITATION : receives
+
+EVENT ||--|| GROUP_CHAT : has
+USER ||--o{ GROUP_CHAT : creates
+
+GROUP_CHAT ||--o{ CHAT_MEMBER : contains
+USER ||--o{ CHAT_MEMBER : joins
+
+GROUP_CHAT ||--o{ ATTRIBUTE : defines
+ATTRIBUTE ||--o{ CHAT_MEMBER_ATTRIBUTE : assigned_to
+CHAT_MEMBER ||--o{ CHAT_MEMBER_ATTRIBUTE : has
+
+GROUP_CHAT ||--o{ FORUM : contains
+USER ||--o{ FORUM : creates
+
+FORUM ||--o{ GC_MESSAGE : contains
+CHAT_MEMBER ||--o{ GC_MESSAGE : sends
+
+GROUP_CHAT ||--o{ DIRECT_MESSAGE : facilitates
+CHAT_MEMBER ||--o{ DIRECT_MESSAGE : participates
+
+DIRECT_MESSAGE ||--o{ DM_MESSAGE : contains
+USER ||--o{ DM_MESSAGE : sends
+
+EVENT ||--o{ NOTIFICATION : generates
+USER ||--o{ NOTIFICATION : receives
+
+EVENT ||--o{ FEEDBACK : collects
+USER ||--o{ FEEDBACK : gives
